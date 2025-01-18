@@ -209,7 +209,7 @@ if __name__ == "__main__":
     subdomain_ip_mapping = {
         'bestcf': 'https://ipdb.030101.xyz/api/bestcf.txt',
         'xiaoqi222': 'https://addressesapi.090227.xyz/CloudFlareYes',
-        'xiaoqi': 'https://raw.githubusercontent.com/kejixiaoqi666/youxuanyuming/refs/heads/main/proxy.txt',
+        'cfip': 'https://raw.githubusercontent.com/kejixiaoqi666/youxuanyuming/refs/heads/main/proxy.txt',
         
     }
 
