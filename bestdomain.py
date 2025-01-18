@@ -207,14 +207,9 @@ if __name__ == "__main__":
     api_token = os.getenv('CF_API_TOKEN')
 
     subdomain_ip_mapping = {
-        '443ip': 'https://raw.githubusercontent.com/2413181638/youxuanyuming/refs/heads/main/443ip.txt',
-        'xiaoqi': 'https://raw.githubusercontent.com/2413181638/youxuanyuming/refs/heads/main/ip.txt',
-        'nodie': 'https://raw.githubusercontent.com/2413181638/youxuanyuming/refs/heads/main/nodie.txt',
-        'cfip': 'https://raw.githubusercontent.com/2413181638/youxuanyuming/refs/heads/main/cfip.txt',
         'bestcf': 'https://ipdb.030101.xyz/api/bestcf.txt',
         'xiaoqi222': 'https://addressesapi.090227.xyz/CloudFlareYes',
         'xiaoqi333': 'https://ip.164746.xyz/ipTop10.html',
-        '80ip': 'https://raw.githubusercontent.com/2413181638/youxuanyuming/refs/heads/main/80ip.txt',
     }
 
     try:
