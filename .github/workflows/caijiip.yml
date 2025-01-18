@@ -2,40 +2,53 @@ name: Update IP List
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # 每隔三十分钟运行一次
-  workflow_dispatch:  # 手动触发
- # push: # 允许提交触发
+    - cron: '*/15 * * * *'  # 每 15 分钟运行一次
+  workflow_dispatch:        # 手动触发
 
 jobs:
-
   update-ip-list:
     runs-on: ubuntu-latest
-    
+
+    concurrency:
+      group: update-ip-list
+      cancel-in-progress: true  # 如果有新的工作流运行，取消之前正在运行的
+
     steps:
-    - uses: actions/checkout@v3
-      
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
-        pip install beautifulsoup4
-        
-    - name: Run script
-      run: python ${{ github.workspace }}/collect_ips.py
-        
-    - name: Commit and push changes
-      run: |
-        git config --global user.email "baolw50@gmail.com"
-        git config --global user.name "jc-lw"
-        if [ -n "$(git status --porcelain)" ]; then
-          git add ip.txt
-          git commit -m "Automatic update"
-          git push
-        else
-          echo "No changes detected, skipping commit."
-        fi
+      # 1. 检出代码
+      - uses: actions/checkout@v3
+        name: Checkout code
+        with:
+          fetch-depth: 0  # 确保获取完整的 Git 历史，以便进行 pull 操作
+
+      # 2. 设置 Python 环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml
+
+      # 4. 运行抓取 IP 的脚本（设置超时时间 10 分钟）
+      - name: Run script to collect IPs with timeout
+        run: |
+          timeout 600 python ${{ github.workspace }}/collect_ips.py
+
+      # 5. Commit and push changes
+      - name: Commit and push changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "ip.txt"
+          pull_before_push: true
+          # 使用 Secrets 里定义的私密参数
+          author_name: ${{ secrets.COMMIT_AUTHOR_NAME }}
+          author_email: ${{ secrets.COMMIT_AUTHOR_EMAIL }}
+          message: "Automatic update"
+        env:
+          # 如果需要使用外部的个人令牌，可以在 Secrets 里设置一个 PAT_TOKEN 并在此替换
+          # 例如： GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          # 如果只在本仓库内推送，则可直接使用下面的 GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
